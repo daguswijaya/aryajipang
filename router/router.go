@@ -8,8 +8,8 @@ import (
 	"github.com/gofiber/session/v2"
 )
 
-// RegisterWeb home
-func RegisterWeb(web fiber.Router, session *session.Session, sessionLookup string, db *database.Database) {
+// Register home
+func Register(web fiber.Router, session *session.Session, sessionLookup string, db *database.Database) {
 	// Home
 	web.Get("/", Controller.GetHome(session, db))
 

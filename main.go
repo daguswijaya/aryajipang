@@ -1,27 +1,36 @@
 package main
 
 import (
+	configuration "aryajipang/config"
+	"aryajipang/database"
+	"aryajipang/router"
 	"log"
+	"net/http"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/template/html"
+	"github.com/gofiber/session/v2"
 )
 
+type App struct {
+	*fiber.App
+
+	DB      *database.Database
+	Session *session.Session
+	w       http.ResponseWriter
+	r       *http.Response
+}
+
 func main() {
-	engine := html.New("./views", ".html")
-	app := fiber.New(fiber.Config{
-		Views: engine,
-	})
+	config := configuration.New()
+	app := App{
+		App:     fiber.New(*config.GetFiberConfig()),
+		Session: session.New(config.GetSessionConfig()),
+	}
 
 	app.Static("/", "./public")
 
-	app.Get("/:param?", func(c *fiber.Ctx) error {
-		if c.Params("param") != "" {
-			return c.SendString("Your param is: " + c.Params("param"))
-			// => Hello john
-		}
-		return c.SendString("it's empty")
-	})
+	web := app.Group("")
+	router.Register(web, app.Session, config.GetString("SESSION_LOOKUP"), app.DB)
 
 	log.Fatal(app.Listen("localhost:3000"))
 }
