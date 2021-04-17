@@ -16,6 +16,7 @@ func Register(web fiber.Router, session *session.Session, sessionLookup string, 
 	// Auth
 	web.Get("/login", Controller.GetLogin(session, db))
 	web.Get("/register", Controller.GetRegister(session, db))
+	web.Post("/register", Controller.PostRegister(session, db))
 	web.Post("/login", Controller.PostLogin(session, db))
 	web.Post("/logout", Controller.PostLogout(session, db))
 
